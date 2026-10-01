@@ -2,7 +2,7 @@ import type { Player, RoomState } from './types/game';
 
 export function returnToLobby(room: RoomState): RoomState {
   const players = Object.fromEntries(Object.values(room.players).map(player => [player.id, { id: player.id, name: player.name }]));
-  return { code: room.code, hostId: room.hostId, status: 'LOBBY', currentRoundIndex: 0, players, guesses: {}, scores: {} };
+  return { ...(room.presence ? { presence: room.presence } : {}), code: room.code, hostId: room.hostId, status: 'LOBBY', currentRoundIndex: 0, players, guesses: {}, scores: {} };
 }
 
 export function bestPairs(players: Player[], scores: RoomState['scores']) {

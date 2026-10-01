@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { ref, onValue, update, runTransaction, type DataSnapshot } from 'firebase/database';
+import { ref, onValue, update, runTransaction, set, onDisconnect, serverTimestamp, type DataSnapshot } from 'firebase/database';
 import { db, waitForFirebaseConnection } from './firebase/config';
 import type { RoomState, Player, TierMap, TierRank } from './types/game';
 import TierBoard from './components/TierBoard';
 import { bestPairs, returnToLobby } from './gameResults';
+import { disconnectedPlayers, removePlayers } from './roomLifecycle';
 
 // ランダム配布用のお題プール
 const DEFAULT_TOPICS = [
@@ -28,6 +29,8 @@ export function App() {
   // Firebase Realtime Database 監視
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [connected, setConnected] = useState(false);
+  const [serverOffset, setServerOffset] = useState(0);
   const perform = async (action: () => Promise<void>) => {
     if (busy) return;
     setBusy(true); setError('');
@@ -48,12 +51,62 @@ export function App() {
     const roomRef = ref(db, `rooms/${roomCode}`);
     const unsubscribe = onValue(roomRef, (snapshot) => {
       const data = snapshot.val();
-      if (data) {
+      if (data && !data.players?.[myPlayerId]) {
+        setRoom(null); setRoomCode(''); setCurrentBoardState(null); setError('部屋から退出しました。次のゲームの待機室で再参加できます。');
+      } else if (data) {
         setRoom({ ...data, guesses: data.guesses ?? {}, scores: data.scores ?? {} });
       } else { setRoom(null); setRoomCode(''); setError('部屋が見つかりません。'); }
     }, cause => { setError(cause.message); setRoomCode(''); setRoom(null); });
     return () => unsubscribe();
-  }, [roomCode]);
+  }, [roomCode, myPlayerId]);
+
+  useEffect(() => {
+    if (!roomCode) return;
+    let active = true;
+    const presenceRef = ref(db, `rooms/${roomCode}/presence/${myPlayerId}`);
+    const stopOffset = onValue(ref(db, '.info/serverTimeOffset'), snapshot => setServerOffset(snapshot.val() ?? 0));
+    const stopConnection = onValue(ref(db, '.info/connected'), snapshot => {
+      const online = snapshot.val() === true;
+      setConnected(online);
+      if (!online) return;
+      // Register the server-side disconnect action before marking this client online.
+      void (async () => {
+        await onDisconnect(presenceRef).set({ online: false, changedAt: serverTimestamp() });
+        if (active) await set(presenceRef, { online: true, changedAt: serverTimestamp() });
+      })().catch(cause => { if (active) setError('接続状態の登録に失敗しました：' + (cause instanceof Error ? cause.message : String(cause))); });
+    });
+    return () => { active = false; stopConnection(); stopOffset(); };
+  }, [roomCode, myPlayerId]);
+
+  useEffect(() => {
+    if (!roomCode || !room?.players[myPlayerId] || !connected || room.presence?.[myPlayerId]?.online !== true) return;
+    let running = false;
+    const checkDepartures = async () => {
+      if (running || !disconnectedPlayers(room, Date.now() + serverOffset).length) return;
+      running = true;
+      try {
+        await runTransaction(ref(db, `rooms/${roomCode}`), (value: RoomState | null) => {
+          if (!value?.players[myPlayerId] || value.presence?.[myPlayerId]?.online !== true) return;
+          const ids = disconnectedPlayers(value, Date.now() + serverOffset);
+          if (!ids.length) return;
+          return removePlayers(value, ids);
+        }, { applyLocally: false });
+      } catch (cause) {
+        setError('退出処理に失敗しました：' + (cause instanceof Error ? cause.message : String(cause)));
+      } finally { running = false; }
+    };
+    void checkDepartures();
+    const timer = setInterval(() => void checkDepartures(), 2000);
+    return () => clearInterval(timer);
+  }, [roomCode, room, myPlayerId, connected, serverOffset]);
+
+  const removeParticipant = async (id: string) => {
+    const result = await runTransaction(ref(db, `rooms/${roomCode}`), (value: RoomState | null) => {
+      if (!value?.players[id] || value.hostId !== myPlayerId || id === myPlayerId) return;
+      return removePlayers(value, [id]);
+    }, { applyLocally: false });
+    if (!result.committed) throw new Error('参加者の状態が変わりました。');
+  };
 
   // 1. 部屋作成 (ホスト)
   const createRoom = async () => {
@@ -271,6 +324,17 @@ export function App() {
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', color: '#fff' }}>
       {error && <p role="alert" className="error">{error}</p>}
       <h1 style={{ color: '#38bdf8', textAlign: 'center' }}>みんなでTier表</h1>
+
+      <section aria-label="参加者の接続状況" style={{ background: '#1e293b', padding: '16px', borderRadius: '8px' }}>
+        <h3>参加者</h3>
+        <p>接続が切れてから30秒後に退出扱いになります。ホストは退出した参加者を手動で外すこともできます。</p>
+        {Object.values(room.players).map(player => <div key={player.id} style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '8px', flexWrap: 'wrap' }}>
+          <span>{player.name}{player.id === room.hostId ? '（ホスト）' : ''}：{room.presence?.[player.id]?.online === false ? '再接続待ち' : room.presence?.[player.id]?.online ? '接続中' : '接続状況不明'}</span>
+          {isHost && player.id !== myPlayerId && <button disabled={busy} onClick={() => {
+            if (window.confirm(player.name + ' さんを部屋から外しますか？')) void perform(() => removeParticipant(player.id));
+          }}>退出した参加者を外す</button>}
+        </div>)}
+      </section>
 
       {/* --- Phase 0: ロビー待機室 --- */}
       {room.status === 'LOBBY' && (

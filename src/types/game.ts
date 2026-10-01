@@ -13,6 +13,8 @@ export interface Player {
 export interface RoomState {
   code: string;
   hostId: string;
+  presence?: Record<string, { online: boolean; changedAt: number }>;
+  departureMessage?: string;
   playerOrder?: string[];
   status: 'LOBBY' | 'CREATING' | 'GUESSING' | 'ROUND_RESULT' | 'FINAL_RESULT';
   currentRoundIndex: number;
