@@ -271,21 +271,21 @@ export function App() {
 
   if (!room) {
     return (
-      <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', color: '#fff' }}>
+      <div style={{ padding: '20px', maxWidth: '600px', margin: '0 auto', color: '#171411' }}>
         {error && <p role="alert" className="error">{error}</p>}
-      <h1 style={{ color: '#38bdf8', textAlign: 'center' }}>みんなでTier表</h1>
-        <div style={{ backgroundColor: '#1e293b', padding: '24px', borderRadius: '12px', marginTop: '24px' }}>
+      <h1 className="game-title" aria-label="みんなでティア表！"><span className="game-title-kicker">みんなで</span><span className="game-title-main">ティア表！</span></h1>
+        <div style={{ backgroundColor: '#FFFDF3', border: '3px solid #171411', padding: '24px', borderRadius: '12px', marginTop: '24px' }}>
           <h2>オンライン入室</h2>
-          <label style={{ fontSize: '0.9rem', color: '#94a3b8' }}>あなたの名前</label>
+          <label style={{ fontSize: '0.9rem', color: '#514547' }}>あなたの名前</label>
           <input
             type="text"
             placeholder="例: たろう"
             value={myName}
             onChange={(e) => setMyName(e.target.value)}
-            style={{ width: '100%', padding: '10px', margin: '8px 0 16px 0', borderRadius: '6px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }}
+            style={{ width: '100%', padding: '10px', margin: '8px 0 16px 0', borderRadius: '6px', background: '#FFFDF3', color: '#171411', border: '2px solid #171411' }}
           />
           <div style={{ display: 'flex', gap: '12px' }}>
-            <button disabled={busy} onClick={() => void perform(createRoom)} style={{ flex: 1, padding: '12px', backgroundColor: '#38bdf8', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+            <button disabled={busy} onClick={() => void perform(createRoom)} style={{ flex: 1, padding: '12px', backgroundColor: '#FFFDF3', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
               {busy ? '接続・処理中…' : '部屋を作成 (ホスト)'}
             </button>
             <div style={{ flex: 1, display: 'flex', gap: '8px' }}>
@@ -294,9 +294,9 @@ export function App() {
                 placeholder="部屋コード"
                 value={inputRoomCode}
                 onChange={(e) => setInputRoomCode(e.target.value)}
-                style={{ flex: 1, padding: '10px', borderRadius: '6px', background: '#0f172a', color: '#fff', border: '1px solid #334155' }}
+                style={{ flex: 1, padding: '10px', borderRadius: '6px', background: '#FFFDF3', color: '#171411', border: '2px solid #171411' }}
               />
-              <button disabled={busy} onClick={() => void perform(joinRoom)} style={{ padding: '12px', backgroundColor: '#475569', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+              <button disabled={busy} onClick={() => void perform(joinRoom)} style={{ padding: '12px', backgroundColor: '#FFFDF3', color: '#171411', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                 参加
               </button>
             </div>
@@ -314,11 +314,11 @@ export function App() {
   if (!currentHost || !myData) return <p role="alert">参加者情報が不正です。再読み込みしてください。</p>;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', color: '#fff' }}>
+    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', color: '#171411' }}>
       {error && <p role="alert" className="error">{error}</p>}
-      <h1 style={{ color: '#38bdf8', textAlign: 'center' }}>みんなでTier表</h1>
+      <h1 className="game-title" aria-label="みんなでティア表！"><span className="game-title-kicker">みんなで</span><span className="game-title-main">ティア表！</span></h1>
 
-      <section aria-label="参加者の接続状況" style={{ background: '#1e293b', padding: '16px', borderRadius: '8px' }}>
+      <section aria-label="参加者の接続状況" style={{ background: '#FFFDF3', border: '3px solid #171411', padding: '16px', borderRadius: '8px' }}>
         <h3>参加者</h3>
         <p>接続が切れてから30秒後に退出扱いになります。ホストは退出した参加者を手動で外すこともできます。</p>
         {Object.values(room.players).map(player => <div key={player.id} style={{ display: 'flex', gap: '12px', alignItems: 'center', marginTop: '8px', flexWrap: 'wrap' }}>
@@ -331,37 +331,37 @@ export function App() {
 
       {/* --- Phase 0: ロビー待機室 --- */}
       {room.status === 'LOBBY' && (
-        <div style={{ backgroundColor: '#1e293b', padding: '24px', borderRadius: '12px', marginTop: '16px' }}>
-          <h2>待機室 (部屋コード: <span style={{ color: '#38bdf8' }}>{room.code}</span>)</h2>
+        <div style={{ backgroundColor: '#FFFDF3', border: '3px solid #171411', padding: '24px', borderRadius: '12px', marginTop: '16px' }}>
+          <h2>待機室 (部屋コード: <span style={{ color: '#171411' }}>{room.code}</span>)</h2>
           <h3 style={{ marginTop: '16px' }}>参加者一覧 ({playersList.length}人):</h3>
           <ul style={{ listStyle: 'none', padding: 0, margin: '12px 0' }}>
             {playersList.map((p) => (
-              <li key={p.id} style={{ padding: '10px', background: '#0f172a', borderRadius: '6px', marginBottom: '8px', border: '1px solid #334155' }}>
+              <li key={p.id} style={{ padding: '10px', background: '#FFFDF3', borderRadius: '6px', marginBottom: '8px', border: '2px solid #171411' }}>
                 {p.name} {p.id === myPlayerId ? '(あなた)' : ''} {p.id === room.hostId ? '👑 ホスト' : ''}
               </li>
             ))}
           </ul>
           {isHost ? (
-            <button disabled={busy} onClick={() => void perform(startGame)} style={{ width: '100%', padding: '14px', backgroundColor: '#38bdf8', color: '#000', border: 'none', borderRadius: '8px', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer' }}>
+            <button disabled={busy} onClick={() => void perform(startGame)} style={{ width: '100%', padding: '14px', backgroundColor: '#FFFDF3', color: '#171411', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', fontSize: '1.1rem', cursor: 'pointer' }}>
               ゲームを開始する (お題を自動配布)
             </button>
           ) : (
-            <p style={{ color: '#94a3b8', textAlign: 'center' }}>ホストがゲームを開始するのを待っています...</p>
+            <p style={{ color: '#514547', textAlign: 'center' }}>ホストがゲームを開始するのを待っています...</p>
           )}
         </div>
       )}
 
       {/* --- Phase 1: 全員一斉Tier作成 --- */}
       {room.status === 'CREATING' && (
-        <div style={{ backgroundColor: '#1e293b', padding: '24px', borderRadius: '12px', marginTop: '16px' }}>
+        <div style={{ backgroundColor: '#FFFDF3', border: '3px solid #171411', padding: '24px', borderRadius: '12px', marginTop: '16px' }}>
           <h2>自分の本気Tierを作成</h2>
-          <div style={{ background: '#0f172a', padding: '12px', borderRadius: '8px', margin: '12px 0', border: '1px solid #334155' }}>
-            <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>あなたのお題:</div>
-            <h3 style={{ color: '#38bdf8' }}>{myData?.topic}</h3>
+          <div style={{ background: '#FFFDF3', padding: '12px', borderRadius: '8px', margin: '12px 0', border: '2px solid #171411' }}>
+            <div style={{ color: '#514547', fontSize: '0.85rem' }}>あなたのお題:</div>
+            <h3 style={{ color: '#171411' }}>{myData?.topic}</h3>
           </div>
 
           {myData?.hostTier ? (
-            <div style={{ textAlign: 'center', padding: '32px 0', color: '#22c55e', fontWeight: 'bold' }}>
+            <div style={{ textAlign: 'center', padding: '32px 0', color: '#236B37', fontWeight: 'bold' }}>
               ✓ あなたのTier表は送信済みです。他のプレイヤーの入力完了を待っています...
             </div>
           ) : (
@@ -373,7 +373,7 @@ export function App() {
                 onStateChange={setCurrentBoardState}
               />
               </Suspense>
-              <button disabled={busy} onClick={() => void perform(submitHostTier)} style={{ width: '100%', padding: '12px', backgroundColor: '#22c55e', color: '#fff', border: 'none', borderRadius: '8px', fontWeight: 'bold', marginTop: '16px', cursor: 'pointer' }}>
+              <button disabled={busy} onClick={() => void perform(submitHostTier)} style={{ width: '100%', padding: '12px', backgroundColor: '#FFFDF3', color: '#171411', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', marginTop: '16px', cursor: 'pointer' }}>
                 この正解Tier表を確定する
               </button>
             </>
@@ -383,29 +383,29 @@ export function App() {
 
       {/* --- Phase 2: 予想入力フェーズ --- */}
       {room.status === 'GUESSING' && (
-        <div style={{ backgroundColor: '#1e293b', padding: '24px', borderRadius: '12px', marginTop: '16px' }}>
+        <div style={{ backgroundColor: '#FFFDF3', border: '3px solid #171411', padding: '24px', borderRadius: '12px', marginTop: '16px' }}>
           <h2>{currentHost.name} さんの感性を予想！</h2>
-          <div style={{ background: '#0f172a', padding: '12px', borderRadius: '8px', margin: '12px 0', border: '1px solid #334155' }}>
-            <div style={{ color: '#94a3b8', fontSize: '0.85rem' }}>テーマ:</div>
-            <h3 style={{ color: '#38bdf8' }}>{currentHost.topic}</h3>
+          <div style={{ background: '#FFFDF3', padding: '12px', borderRadius: '8px', margin: '12px 0', border: '2px solid #171411' }}>
+            <div style={{ color: '#514547', fontSize: '0.85rem' }}>テーマ:</div>
+            <h3 style={{ color: '#171411' }}>{currentHost.topic}</h3>
           </div>
 
           {currentHost.id === myPlayerId ? (
             <div style={{ textAlign: 'center', padding: '32px 0' }}>
-              <p style={{ color: '#38bdf8', fontWeight: 'bold', fontSize: '1.2rem' }}>あなたは「親（出題者）」です！</p>
-              <p style={{ color: '#94a3b8', marginTop: '8px' }}>みんながあなたのTier表を予想しています...</p>
-              <section aria-label="自分のTier表" style={{ textAlign: 'left', marginTop: '20px', padding: '16px', background: '#0f172a', borderRadius: '8px' }}>
+              <p style={{ color: '#171411', fontWeight: 'bold', fontSize: '1.2rem' }}>あなたは「親（出題者）」です！</p>
+              <p style={{ color: '#514547', marginTop: '8px' }}>みんながあなたのTier表を予想しています...</p>
+              <section aria-label="自分のTier表" style={{ textAlign: 'left', marginTop: '20px', padding: '16px', background: '#FFFDF3', border: '3px solid #171411', borderRadius: '8px' }}>
                 <h3>あなたが作ったTier表</h3>
                 {(['S', 'A', 'B', 'C', 'D'] as TierRank[]).map(rank => <p key={rank} style={{ margin: '8px 0' }}><strong>{rank}:</strong> {(myData.hostTier?.[rank] ?? []).join('、') || 'なし'}</p>)}
               </section>
               {(
-                <button disabled={busy} onClick={() => void perform(openRoundResult)} style={{ marginTop: '24px', padding: '12px 24px', backgroundColor: '#eab308', color: '#000', border: 'none', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                <button disabled={busy} onClick={() => void perform(openRoundResult)} style={{ marginTop: '24px', padding: '12px 24px', backgroundColor: '#FFFDF3', color: '#171411', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
                   全員の入力完了後に正解オープン！
                 </button>
               )}
             </div>
           ) : room.guesses[currentHost.id]?.[myPlayerId] ? (
-            <div style={{ textAlign: 'center', padding: '32px 0', color: '#22c55e', fontWeight: 'bold' }}>
+            <div style={{ textAlign: 'center', padding: '32px 0', color: '#236B37', fontWeight: 'bold' }}>
               ✓ 予想を確定しました。全員の完了を待っています...
             </div>
           ) : (
@@ -417,7 +417,7 @@ export function App() {
                 onStateChange={setCurrentBoardState}
               />
               </Suspense>
-              <button disabled={busy} onClick={() => void perform(submitGuessTier)} style={{ width: '100%', padding: '12px', backgroundColor: '#38bdf8', color: '#000', border: 'none', borderRadius: '8px', fontWeight: 'bold', marginTop: '16px', cursor: 'pointer' }}>
+              <button disabled={busy} onClick={() => void perform(submitGuessTier)} style={{ width: '100%', padding: '12px', backgroundColor: '#FFFDF3', color: '#171411', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', marginTop: '16px', cursor: 'pointer' }}>
                 予想を確定する
               </button>
             </>
@@ -427,7 +427,7 @@ export function App() {
 
       {/* --- Phase 3: ターン結果（正解 vs 予想の対比） --- */}
       {room.status === 'ROUND_RESULT' && (
-        <div style={{ backgroundColor: '#1e293b', padding: '24px', borderRadius: '12px', marginTop: '16px' }}>
+        <div style={{ backgroundColor: '#FFFDF3', border: '3px solid #171411', padding: '24px', borderRadius: '12px', marginTop: '16px' }}>
           <h2>【正解発表】{currentHost.name} さんのTier表</h2>
           {(['S', 'A', 'B', 'C', 'D'] as TierRank[]).map(rank => <p key={rank}>{rank}: {(currentHost.hostTier?.[rank] ?? []).join('、') || 'なし'}</p>)}
 
@@ -438,16 +438,16 @@ export function App() {
               const isPitari = score === 100;
 
               return (
-                <div key={guesser.id} style={{ background: '#0f172a', padding: '16px', borderRadius: '8px', border: isPitari ? '2px solid #eab308' : '1px solid #334155' }}>
+                <div key={guesser.id} style={{ background: '#FFFDF3', padding: '16px', borderRadius: '8px', border: isPitari ? '4px solid #171411' : '2px solid #171411' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <strong>{guesser.name} の予想</strong>
-                    <span style={{ color: isPitari ? '#eab308' : '#38bdf8', fontWeight: 'bold' }}>
+                    <span style={{ color: '#171411', fontWeight: 'bold' }}>
                       {score}点 {isPitari ? '🎯 ピタリ賞!' : ''}
                     </span>
                   </div>
                   {(['S', 'A', 'B', 'C', 'D'] as TierRank[]).map(rank => (
                     <div key={rank} style={{ display: 'flex', gap: '6px', margin: '4px 0', alignItems: 'center' }}>
-                      <span style={{ width: '24px', fontWeight: 'bold', color: '#94a3b8' }}>{rank}:</span>
+                      <span style={{ width: '24px', fontWeight: 'bold', color: '#514547' }}>{rank}:</span>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                         {(guessTier?.[rank] || []).map(item => {
                           const isCorrect = currentHost.hostTier?.[rank]?.includes(item);
@@ -456,9 +456,9 @@ export function App() {
                               padding: '2px 6px',
                               borderRadius: '4px',
                               fontSize: '0.8rem',
-                              background: isCorrect ? '#14532d' : '#334155',
-                              border: isCorrect ? '1px solid #22c55e' : '1px solid #475569',
-                              color: '#fff'
+                              background: '#FFFDF3',
+                              border: isCorrect ? '3px solid #236B37' : '2px solid #171411',
+                              color: '#171411'
                             }}>
                               {item} {isCorrect ? '✓' : ''}
                             </span>
@@ -473,7 +473,7 @@ export function App() {
           </div>
 
           {isHost && (
-            <button disabled={busy} onClick={() => void perform(nextRound)} style={{ width: '100%', padding: '12px', backgroundColor: '#38bdf8', color: '#000', border: 'none', borderRadius: '8px', fontWeight: 'bold', marginTop: '24px', cursor: 'pointer' }}>
+            <button disabled={busy} onClick={() => void perform(nextRound)} style={{ width: '100%', padding: '12px', backgroundColor: '#FFFDF3', color: '#171411', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', marginTop: '24px', cursor: 'pointer' }}>
               次のターンへ進む ➔
             </button>
           )}
@@ -482,12 +482,12 @@ export function App() {
 
       {/* --- Phase 4: 総合結果発表 --- */}
       {room.status === 'FINAL_RESULT' && (
-        <div style={{ backgroundColor: '#1e293b', padding: '24px', borderRadius: '12px', marginTop: '16px', textAlign: 'center' }}>
-          <h2 style={{ color: '#38bdf8', fontSize: '2rem' }}>🏆 最終結果発表 🏆</h2>
-          <p style={{ color: '#94a3b8', margin: '12px 0' }}>全員のプレイが終了しました！</p>
+        <div style={{ backgroundColor: '#FFFDF3', border: '3px solid #171411', padding: '24px', borderRadius: '12px', marginTop: '16px', textAlign: 'center' }}>
+          <h2 style={{ color: '#171411', fontSize: '2rem' }}>🏆 最終結果発表 🏆</h2>
+          <p style={{ color: '#514547', margin: '12px 0' }}>全員のプレイが終了しました！</p>
 
           <ol>{playersList.map(player => ({ ...player, total: Object.values(room.scores).reduce((sum, scores) => sum + (scores[player.id] ?? 0), 0) })).sort((a, b) => b.total - a.total).map(player => <li key={player.id}>{player.name}: {player.total}点</li>)}</ol>
-          <section aria-label="相性がよかったペア" style={{ padding: '16px', background: '#0f172a', borderRadius: '8px' }}>
+          <section aria-label="相性がよかったペア" style={{ padding: '16px', background: '#FFFDF3', border: '3px solid #171411', borderRadius: '8px' }}>
             <h3>🤝 一番相性がよかったペア</h3>
             <p>お互いを予想した得点の平均で比較します。同点は全ペアを表示します。</p>
             {winningPairs.length ? winningPairs.map(pair => <div key={pair.first.id + ':' + pair.second.id} style={{ marginTop: '16px' }}>
@@ -497,7 +497,7 @@ export function App() {
             </div>) : <p>お互いの予想がそろったペアはありません。</p>}
           </section>
           <p style={{ marginTop: '16px' }}>部屋コード：{room.code} — 次のゲームへの新規参加を受け付けています。</p>
-          {isHost ? <button disabled={busy} onClick={() => void perform(playAgain)} style={{ padding: '12px 24px', backgroundColor: '#38bdf8', color: '#000', border: 'none', borderRadius: '8px', fontWeight: 'bold', marginTop: '20px', cursor: 'pointer' }}>
+          {isHost ? <button disabled={busy} onClick={() => void perform(playAgain)} style={{ padding: '12px 24px', backgroundColor: '#FFFDF3', color: '#171411', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', marginTop: '20px', cursor: 'pointer' }}>
             もう一度あそぶ（待機室へ）
           </button> : <p style={{ marginTop: '20px' }}>ホストが待機室に戻すのを待っています。</p>}
         </div>

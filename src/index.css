@@ -1,11 +1,40 @@
-:root { font-family: system-ui, sans-serif; color: #f8fafc; background: #0f172a; color-scheme: dark; }
+:root {
+  font-family: system-ui, 'Hiragino Kaku Gothic ProN', 'Yu Gothic', sans-serif;
+  color: #171411;
+  background: #D93B60;
+  color-scheme: light;
+  font-synthesis: none;
+}
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; }
-#root { width: 100%; min-height: 100svh; }
-h1 { font-size: clamp(1.8rem, 5vw, 2.8rem); }
-h2 { color: #f8fafc; }
-input { min-width: 0; font: inherit; }
-button { font: inherit; }
-button:disabled { opacity: .5; cursor: not-allowed !important; }
-button:focus-visible, input:focus-visible { outline: 2px solid #38bdf8; outline-offset: 3px; }
-.error { padding: 12px; background: #7f1d1d; color: white; border-radius: 8px; overflow-wrap: anywhere; }
+body { margin: 0; min-width: 320px; background: #D93B60; }
+#root { width: 100%; min-height: 100svh; background: #D93B60; }
+h2, h3 { color: #171411; line-height: 1.5; }
+.game-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 28px 0 36px;
+  color: #FFFDF3;
+  font-family: 'Dela Gothic One', 'Arial Black', 'Hiragino Kaku Gothic ProN', sans-serif;
+  font-weight: 900;
+  line-height: 1.3;
+  text-align: center;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 5px #171411;
+  text-shadow: 0 7px 0 #C6E8F2;
+}
+.game-title-kicker { font-size: clamp(1.8rem, 6vw, 2.7rem); -webkit-text-stroke-width: 3px; transform: rotate(-3deg); }
+.game-title-main { font-size: clamp(2.9rem, 11vw, 5.8rem); white-space: nowrap; letter-spacing: .02em; }
+input { min-width: 0; font: inherit; color: #171411; background: #FFFDF3; }
+input::placeholder { color: #736769; }
+button { font: inherit; font-weight: 800; color: #171411; background: #FFFDF3; border: 3px solid #171411; border-radius: 8px; padding: 8px 12px; box-shadow: 0 3px 0 #171411; cursor: pointer; }
+button:hover:not(:disabled) { filter: brightness(.96); }
+button:active:not(:disabled) { box-shadow: none; translate: 0 3px; }
+button:disabled { opacity: .5; cursor: not-allowed !important; box-shadow: none; }
+button:focus-visible, input:focus-visible { outline: 3px solid #171411; outline-offset: 4px; }
+.error { padding: 12px; background: #FFFDF3; border: 3px solid #171411; color: #9D1535; border-radius: 8px; overflow-wrap: anywhere; }
+@media (max-width: 420px) {
+  .game-title { gap: 10px; -webkit-text-stroke-width: 3px; text-shadow: 0 5px 0 #C6E8F2; }
+  .game-title-kicker { -webkit-text-stroke-width: 2px; }
+}

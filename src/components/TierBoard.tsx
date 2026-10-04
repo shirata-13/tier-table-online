@@ -36,12 +36,12 @@ const defaultInitialState: TierState = {
 const TIER_RANKS: TierRank[] = ['S', 'A', 'B', 'C', 'D'];
 
 const TIER_COLORS: Record<TierRank, { bg: string; labelBg: string }> = {
-  S: { bg: 'rgba(239, 68, 68, 0.1)', labelBg: '#ef4444' },
-  A: { bg: 'rgba(249, 115, 22, 0.1)', labelBg: '#f97316' },
-  B: { bg: 'rgba(234, 179, 8, 0.1)', labelBg: '#eab308' },
-  C: { bg: 'rgba(34, 197, 94, 0.1)', labelBg: '#22c55e' },
-  D: { bg: 'rgba(59, 130, 246, 0.1)', labelBg: '#3b82f6' },
-  POOL: { bg: '#0f172a', labelBg: '#475569' },
+  S: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
+  A: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
+  B: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
+  C: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
+  D: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
+  POOL: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
 };
 
 export const TierBoard: React.FC<TierBoardProps> = ({
@@ -106,13 +106,14 @@ export const TierBoard: React.FC<TierBoardProps> = ({
                 borderRadius: '8px',
                 overflow: 'hidden',
                 backgroundColor: TIER_COLORS[rank].bg,
-                border: '1px solid #334155',
+                border: '3px solid #171411',
               }}
             >
               {/* Tier ラベル (S, A, B...) */}
               <div
                 style={{
-                  width: '70px',
+                  width: '58px',
+                  borderRight: '3px solid #171411',
                   backgroundColor: TIER_COLORS[rank].labelBg,
                   color: '#000',
                   fontWeight: 'bold',
@@ -141,7 +142,7 @@ export const TierBoard: React.FC<TierBoardProps> = ({
                       padding: '8px',
                       alignItems: 'center',
                       backgroundColor: snapshot.isDraggingOver
-                        ? 'rgba(255, 255, 255, 0.05)'
+                        ? '#FADAE2'
                         : 'transparent',
                       transition: 'background-color 0.2s ease',
                     }}
@@ -155,12 +156,12 @@ export const TierBoard: React.FC<TierBoardProps> = ({
                             {...provided.dragHandleProps}
                             style={{
                               padding: '8px 14px',
-                              backgroundColor: '#334155',
-                              color: '#fff',
+                              backgroundColor: '#FFFDF3',
+                              color: '#171411',
                               borderRadius: '6px',
                               fontWeight: '500',
                               fontSize: '0.9rem',
-                              border: '1px solid #475569',
+                              border: '2px solid #171411',
                               userSelect: 'none',
                               boxShadow: snapshot.isDragging
                                 ? '0 8px 16px rgba(0,0,0,0.3)'
@@ -183,7 +184,7 @@ export const TierBoard: React.FC<TierBoardProps> = ({
 
         {/* 未配置エリア (POOL) */}
         <div style={{ marginTop: '24px' }}>
-          <div style={{ fontSize: '0.9rem', color: '#94a3b8', marginBottom: '8px' }}>
+          <div style={{ fontSize: '0.9rem', color: '#514547', marginBottom: '8px' }}>
             未配置のアイテム:
           </div>
           <Droppable droppableId="POOL" direction="horizontal">
@@ -195,14 +196,14 @@ export const TierBoard: React.FC<TierBoardProps> = ({
                   minHeight: '80px',
                   padding: '12px',
                   borderRadius: '8px',
-                  border: '2px dashed #334155',
+                  border: '3px solid #171411',
                   display: 'flex',
                   flexWrap: 'nowrap',
                       overflowX: 'auto',
                   gap: '8px',
                   alignItems: 'center',
                   backgroundColor: snapshot.isDraggingOver
-                    ? 'rgba(56, 189, 248, 0.05)'
+                    ? '#FADAE2'
                     : TIER_COLORS.POOL.bg,
                 }}
               >
@@ -215,12 +216,12 @@ export const TierBoard: React.FC<TierBoardProps> = ({
                         {...provided.dragHandleProps}
                         style={{
                           padding: '8px 14px',
-                          backgroundColor: '#1e293b',
-                          color: '#f8fafc',
+                          backgroundColor: '#FFFDF3',
+                          color: '#171411',
                           borderRadius: '6px',
                           fontWeight: '500',
                           fontSize: '0.9rem',
-                          border: '1px solid #475569',
+                          border: '2px solid #171411',
                           userSelect: 'none',
                           boxShadow: snapshot.isDragging
                             ? '0 8px 16px rgba(0,0,0,0.3)'
