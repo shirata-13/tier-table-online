@@ -2,7 +2,8 @@ import { useState, useEffect, lazy, Suspense } from 'react';
 import { ref, onValue, update, runTransaction, set, onDisconnect, serverTimestamp, type DataSnapshot } from 'firebase/database';
 import { db, waitForFirebaseConnection } from './firebase/config';
 import type { RoomState, Player, TierMap, TierRank } from './types/game';
-import { bestPairs, returnToLobby } from './gameResults';
+import { returnToLobby } from './gameResults';
+import FinalResults from './components/FinalResults';
 import { disconnectedPlayers, removePlayers } from './roomLifecycle';
 
 const TierBoard = lazy(() => import('./components/TierBoard'));
@@ -309,12 +310,11 @@ export function App() {
   const playersList = (room.playerOrder ?? Object.keys(room.players || {})).map(id => room.players[id]).filter(Boolean);
   const myData = room.players[myPlayerId];
   const isHost = room.hostId === myPlayerId;
-  const winningPairs = bestPairs(playersList, room.scores);
   const currentHost = playersList[room.currentRoundIndex];
   if (!currentHost || !myData) return <p role="alert">参加者情報が不正です。再読み込みしてください。</p>;
 
   return (
-    <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', color: '#171411' }}>
+    <div style={{ padding: '20px', maxWidth: room.status === 'FINAL_RESULT' ? '1280px' : '800px', margin: '0 auto', color: '#171411' }}>
       {error && <p role="alert" className="error">{error}</p>}
       <h1 className="game-title" aria-label="みんなでティア表！"><span className="game-title-kicker">みんなで</span><span className="game-title-main">ティア表！</span></h1>
 
@@ -488,28 +488,8 @@ export function App() {
         </div>
       )}
 
-      {/* --- Phase 4: 総合結果発表 --- */}
-      {room.status === 'FINAL_RESULT' && (
-        <div style={{ backgroundColor: '#FFFDF3', border: '3px solid #171411', padding: '24px', borderRadius: '12px', marginTop: '16px', textAlign: 'center' }}>
-          <h2 style={{ color: '#171411', fontSize: '2rem' }}>🏆 最終結果発表 🏆</h2>
-          <p style={{ color: '#514547', margin: '12px 0' }}>全員のプレイが終了しました！</p>
+      {room.status === 'FINAL_RESULT' && <FinalResults room={room} players={playersList} isHost={isHost} busy={busy} onPlayAgain={() => void perform(playAgain)} />}
 
-          <ol>{playersList.map(player => ({ ...player, total: Object.values(room.scores).reduce((sum, scores) => sum + (scores[player.id] ?? 0), 0) })).sort((a, b) => b.total - a.total).map(player => <li key={player.id}>{player.name}: {player.total}点</li>)}</ol>
-          <section aria-label="相性がよかったペア" style={{ padding: '16px', background: '#FFFDF3', border: '3px solid #171411', borderRadius: '8px' }}>
-            <h3>🤝 一番相性がよかったペア</h3>
-            <p>お互いを予想した得点の平均で比較します。同点は全ペアを表示します。</p>
-            {winningPairs.length ? winningPairs.map(pair => <div key={pair.first.id + ':' + pair.second.id} style={{ marginTop: '16px' }}>
-              <strong>{pair.first.name} ＆ {pair.second.name}：相性 {pair.average}点 / 100点</strong>
-              <p>{pair.first.name} → {pair.second.name}：{pair.firstScore}点</p>
-              <p>{pair.second.name} → {pair.first.name}：{pair.secondScore}点</p>
-            </div>) : <p>お互いの予想がそろったペアはありません。</p>}
-          </section>
-          <p style={{ marginTop: '16px' }}>部屋コード：{room.code} — 次のゲームへの新規参加を受け付けています。</p>
-          {isHost ? <button disabled={busy} onClick={() => void perform(playAgain)} style={{ padding: '12px 24px', backgroundColor: '#FFFDF3', color: '#171411', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', marginTop: '20px', cursor: 'pointer' }}>
-            もう一度あそぶ（待機室へ）
-          </button> : <p style={{ marginTop: '20px' }}>ホストが待機室に戻すのを待っています。</p>}
-        </div>
-      )}
     </div>
   );
 }

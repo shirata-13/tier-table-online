@@ -18,3 +18,16 @@ export function bestPairs(players: Player[], scores: RoomState['scores']) {
   const maximum = Math.max(...pairs.map(pair => pair.average));
   return pairs.filter(pair => pair.average === maximum);
 }
+
+export function finalRanking(players: Player[], scores: RoomState['scores']) {
+  const results = players.map(player => {
+    const guesses = Object.entries(scores).filter(([hostId]) => hostId !== player.id)
+      .map(([, round]) => round[player.id]).filter((score): score is number => typeof score === 'number');
+    const baseScore = guesses.reduce((sum, score) => sum + score, 0);
+    const perfectCount = guesses.filter(score => score === 100).length;
+    const bonus = perfectCount * 10;
+    return { ...player, baseScore, perfectCount, bonus, total: baseScore + bonus };
+  }).sort((a, b) => b.total - a.total);
+  return results.map(player => ({ ...player,
+    rank: results.findIndex(other => other.total === player.total) + 1 }));
+}

@@ -38,3 +38,35 @@ button:focus-visible, input:focus-visible { outline: 3px solid #171411; outline-
   .game-title { gap: 10px; -webkit-text-stroke-width: 3px; text-shadow: 0 5px 0 #C6E8F2; }
   .game-title-kicker { -webkit-text-stroke-width: 2px; }
 }
+
+.final-results { margin-top: 36px; text-align: center; }
+.final-results-title { margin: 0 0 28px; font-size: clamp(2rem, 5vw, 3.8rem); font-weight: 900; color: #fff; paint-order: stroke fill; -webkit-text-stroke: 4px #171411; line-height: 1.4; }
+.final-results-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; align-items: stretch; }
+.result-card { min-width: 0; min-height: 480px; padding: 28px 20px; border: 3px solid #171411; border-radius: 18px; background: #FFFDF3; }
+.result-card h3 { font-size: 1.55rem; margin: 0 0 18px; }
+.result-symbol { display: block; font-size: 4rem; margin: 12px 0 24px; }
+.result-description { font-size: .9rem; color: #514547; line-height: 1.8; overflow-wrap: anywhere; }
+.award-list, .final-ranking { padding: 0; margin: 24px 0; list-style: none; }
+.award-name, .pair-name { display: block; border: 2px solid #171411; border-radius: 5px; padding: 16px 12px; font-size: 1.5rem; overflow-wrap: anywhere; }
+.award-name { margin-bottom: 14px; background: #FFF2BF; }
+.award-name span { display: block; font-size: .95rem; margin-top: 6px; }
+.best-pair + .best-pair { border-top: 2px dashed #171411; margin-top: 24px; padding-top: 24px; }
+.pair-cross { display: block; font-size: 2.6rem; margin: 8px 0; }
+.pair-rate { font-size: 1.6rem; font-weight: 800; margin: 20px 0 10px; }
+.ranking-entry { margin-bottom: 22px; text-align: left; }
+.ranking-main { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: 10px; row-gap: 4px; font-size: 1.2rem; }
+.ranking-entry[data-rank="1"] .ranking-main { font-size: 1.9rem; }
+.ranking-entry[data-rank="2"] .ranking-main { font-size: 1.5rem; }
+.ranking-place { white-space: nowrap; font-weight: 800; }
+.ranking-name { overflow-wrap: anywhere; min-width: 0; flex: 1; }
+.ranking-score { white-space: nowrap; }
+.ranking-score small { font-size: .6em; margin-left: 2px; }
+.ranking-detail { font-size: .8rem; color: #514547; margin: 6px 0 0; }
+.final-results-footer { margin-top: 32px; }
+.final-results-footer p { font-weight: 600; line-height: 1.8; }
+.play-again-button { width: min(100%, 380px); padding: 18px 24px; font-size: 1.5rem; margin-top: 20px; }
+@media (max-width: 800px) {
+  .final-results-grid { grid-template-columns: 1fr; gap: 18px; }
+  .result-card { min-height: auto; }
+  .final-results-title { -webkit-text-stroke-width: 3px; }
+}

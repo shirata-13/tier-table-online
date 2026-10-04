@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { bestPairs, returnToLobby } from '../src/gameResults.ts';
+import { bestPairs, returnToLobby, finalRanking } from '../src/gameResults.ts';
 const players = ['a', 'b', 'c'].map(id => ({ id, name: id }));
 
 test('replay retains the room and all participants, clearing game data each time', () => {
@@ -34,4 +34,28 @@ test('zero scores are valid and directions are preserved', () => {
   assert.equal(pair.firstScore, 20);
   assert.equal(pair.secondScore, 0);
   assert.equal(pair.average, 10);
+});
+
+test('perfect guesses award 10 points each and change final ranking', () => {
+  const scores = { a: { b: 99, c: 20 }, b: { a: 100, c: 20 }, c: { a: 80, b: 90 } };
+  const result = finalRanking(players, scores);
+  assert.deepEqual(result.map(p => p.id), ['a', 'b', 'c']);
+  assert.equal(result[0].baseScore, 180);
+  assert.equal(result[0].perfectCount, 1);
+  assert.equal(result[0].bonus, 10);
+  assert.equal(result[0].total, 190);
+  assert.equal(result[1].total, 189);
+  assert.deepEqual(finalRanking(players, scores), result);
+});
+test('multiple perfect guesses count individually; own round scores do not count', () => {
+  const [result] = finalRanking([players[0]], { a: { a: 100 }, b: { a: 100 }, c: { a: 100 } });
+  assert.equal(result.perfectCount, 2);
+  assert.equal(result.bonus, 20);
+  assert.equal(result.total, 220);
+});
+test('equal totals share a rank and missing guesses earn no bonus', () => {
+  const result = finalRanking(players, { a: { b: 50 }, b: { a: 50 } });
+  assert.deepEqual(result.map(p => p.rank), [1, 1, 3]);
+  assert.equal(result[2].total, 0);
+  assert.equal(result[2].perfectCount, 0);
 });
