@@ -91,3 +91,8 @@ button:focus-visible, input:focus-visible { outline: 3px solid #171411; outline-
   .room-entry-join > button { flex: none !important; width: 100%; min-width: 0; }
   .room-entry-actions button, .room-entry-join input { min-height: 48px; }
 }
+
+@media (max-width: 600px) {
+  .tier-pool { flex-wrap: wrap !important; overflow-x: visible !important; align-items: stretch !important; }
+  .tier-pool-item { flex: 0 0 calc((100% - 8px) / 2); min-width: 0; padding: 8px 10px !important; white-space: normal; overflow-wrap: anywhere; line-height: 1.5; }
+}

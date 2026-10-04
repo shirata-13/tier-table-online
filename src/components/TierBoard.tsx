@@ -190,6 +190,7 @@ export const TierBoard: React.FC<TierBoardProps> = ({
           <Droppable droppableId="POOL" direction="horizontal">
             {(provided, snapshot) => (
               <div
+                className="tier-pool"
                 ref={provided.innerRef}
                 {...provided.droppableProps}
                 style={{
@@ -211,6 +212,7 @@ export const TierBoard: React.FC<TierBoardProps> = ({
                   <Draggable key={itemText} draggableId={itemText} index={index}>
                     {(provided, snapshot) => (
                       <div
+                        className="tier-pool-item"
                         ref={provided.innerRef}
                         {...provided.draggableProps}
                         {...provided.dragHandleProps}
