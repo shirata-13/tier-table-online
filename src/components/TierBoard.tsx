@@ -36,12 +36,12 @@ const defaultInitialState: TierState = {
 const TIER_RANKS: TierRank[] = ['S', 'A', 'B', 'C', 'D'];
 
 const TIER_COLORS: Record<TierRank, { bg: string; labelBg: string }> = {
-  S: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
-  A: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
-  B: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
-  C: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
-  D: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
-  POOL: { bg: '#FFFDF3', labelBg: '#FFFDF3' },
+  S: { bg: '#FFF2BF', labelBg: '#ef4444' },
+  A: { bg: '#FFF2BF', labelBg: '#f97316' },
+  B: { bg: '#FFF2BF', labelBg: '#eab308' },
+  C: { bg: '#FFF2BF', labelBg: '#22c55e' },
+  D: { bg: '#FFF2BF', labelBg: '#3b82f6' },
+  POOL: { bg: '#FFF2BF', labelBg: '#FFF2BF' },
 };
 
 export const TierBoard: React.FC<TierBoardProps> = ({
@@ -142,7 +142,7 @@ export const TierBoard: React.FC<TierBoardProps> = ({
                       padding: '8px',
                       alignItems: 'center',
                       backgroundColor: snapshot.isDraggingOver
-                        ? '#FADAE2'
+                        ? '#FFE49A'
                         : 'transparent',
                       transition: 'background-color 0.2s ease',
                     }}
@@ -203,7 +203,7 @@ export const TierBoard: React.FC<TierBoardProps> = ({
                   gap: '8px',
                   alignItems: 'center',
                   backgroundColor: snapshot.isDraggingOver
-                    ? '#FADAE2'
+                    ? '#FFE49A'
                     : TIER_COLORS.POOL.bg,
                 }}
               >

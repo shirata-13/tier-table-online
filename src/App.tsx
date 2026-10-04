@@ -355,7 +355,7 @@ export function App() {
       {room.status === 'CREATING' && (
         <div style={{ backgroundColor: '#FFFDF3', border: '3px solid #171411', padding: '24px', borderRadius: '12px', marginTop: '16px' }}>
           <h2>自分の本気Tierを作成</h2>
-          <div style={{ background: '#FFFDF3', padding: '12px', borderRadius: '8px', margin: '12px 0', border: '2px solid #171411' }}>
+          <div style={{ background: '#FFF2BF', padding: '12px', borderRadius: '8px', margin: '12px 0', border: '2px solid #171411' }}>
             <div style={{ color: '#514547', fontSize: '0.85rem' }}>あなたのお題:</div>
             <h3 style={{ color: '#171411' }}>{myData?.topic}</h3>
           </div>
@@ -385,7 +385,7 @@ export function App() {
       {room.status === 'GUESSING' && (
         <div style={{ backgroundColor: '#FFFDF3', border: '3px solid #171411', padding: '24px', borderRadius: '12px', marginTop: '16px' }}>
           <h2>{currentHost.name} さんの感性を予想！</h2>
-          <div style={{ background: '#FFFDF3', padding: '12px', borderRadius: '8px', margin: '12px 0', border: '2px solid #171411' }}>
+          <div style={{ background: '#FFF2BF', padding: '12px', borderRadius: '8px', margin: '12px 0', border: '2px solid #171411' }}>
             <div style={{ color: '#514547', fontSize: '0.85rem' }}>テーマ:</div>
             <h3 style={{ color: '#171411' }}>{currentHost.topic}</h3>
           </div>
@@ -431,6 +431,10 @@ export function App() {
           <h2>【正解発表】{currentHost.name} さんのTier表</h2>
           {(['S', 'A', 'B', 'C', 'D'] as TierRank[]).map(rank => <p key={rank}>{rank}: {(currentHost.hostTier?.[rank] ?? []).join('、') || 'なし'}</p>)}
 
+          <p style={{ display: 'flex', flexWrap: 'wrap', gap: '12px', marginTop: '16px', fontSize: '0.85rem' }}>
+            <span style={{ background: '#D4F1CE', border: '2px solid #236B37', borderRadius: '4px', padding: '4px 8px' }}>✓ 完全一致</span>
+            <span style={{ background: '#FFE0AC', border: '2px solid #9A5800', borderRadius: '4px', padding: '4px 8px' }}>1段ずれ</span>
+          </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px', marginTop: '20px' }}>
             {playersList.filter(p => p.id !== currentHost.id).map(guesser => {
               const guessTier = room.guesses[currentHost.id]?.[guesser.id];
@@ -438,7 +442,7 @@ export function App() {
               const isPitari = score === 100;
 
               return (
-                <div key={guesser.id} style={{ background: '#FFFDF3', padding: '16px', borderRadius: '8px', border: isPitari ? '4px solid #171411' : '2px solid #171411' }}>
+                <div key={guesser.id} style={{ background: '#FFF2BF', padding: '16px', borderRadius: '8px', border: isPitari ? '4px solid #171411' : '2px solid #171411' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
                     <strong>{guesser.name} の予想</strong>
                     <span style={{ color: '#171411', fontWeight: 'bold' }}>
@@ -450,17 +454,21 @@ export function App() {
                       <span style={{ width: '24px', fontWeight: 'bold', color: '#514547' }}>{rank}:</span>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '4px' }}>
                         {(guessTier?.[rank] || []).map(item => {
-                          const isCorrect = currentHost.hostTier?.[rank]?.includes(item);
+                          const ranks: TierRank[] = ['S', 'A', 'B', 'C', 'D'];
+                          const answerIndex = ranks.findIndex(answerRank => currentHost.hostTier?.[answerRank]?.includes(item));
+                          const distance = answerIndex < 0 ? Infinity : Math.abs(answerIndex - ranks.indexOf(rank));
+                          const isCorrect = distance === 0;
+                          const isNear = distance === 1;
                           return (
                             <span key={item} style={{
                               padding: '2px 6px',
                               borderRadius: '4px',
                               fontSize: '0.8rem',
-                              background: '#FFFDF3',
-                              border: isCorrect ? '3px solid #236B37' : '2px solid #171411',
+                              background: isCorrect ? '#D4F1CE' : isNear ? '#FFE0AC' : '#FFFDF3',
+                              border: isCorrect ? '2px solid #236B37' : isNear ? '2px solid #9A5800' : '2px solid #171411',
                               color: '#171411'
                             }}>
-                              {item} {isCorrect ? '✓' : ''}
+                              {item} {isCorrect ? '✓' : isNear ? '（1段ずれ）' : ''}
                             </span>
                           );
                         })}
