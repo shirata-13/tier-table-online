@@ -285,11 +285,11 @@ export function App() {
             onChange={(e) => setMyName(e.target.value)}
             style={{ width: '100%', padding: '10px', margin: '8px 0 16px 0', borderRadius: '6px', background: '#FFFDF3', color: '#171411', border: '2px solid #171411' }}
           />
-          <div style={{ display: 'flex', gap: '12px' }}>
+          <div className="room-entry-actions" style={{ display: 'flex', gap: '12px' }}>
             <button disabled={busy} onClick={() => void perform(createRoom)} style={{ flex: 1, padding: '12px', backgroundColor: '#FFFDF3', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
               {busy ? '接続・処理中…' : '部屋を作成 (ホスト)'}
             </button>
-            <div style={{ flex: 1, display: 'flex', gap: '8px' }}>
+            <div className="room-entry-join" style={{ flex: 1, display: 'flex', gap: '8px' }}>
               <input
                 type="text"
                 placeholder="部屋コード"

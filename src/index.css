@@ -82,3 +82,12 @@ button:focus-visible, input:focus-visible { outline: 3px solid #171411; outline-
 .bgm-note, .bgm-error { font-size: .8rem; line-height: 1.6; margin: 12px 0 0; }
 .bgm-note { color: #514547; }
 .bgm-error { color: #9D1535; }
+
+@media (max-width: 600px) {
+  .room-entry-actions, .room-entry-join { flex-direction: column; align-items: stretch; }
+  .room-entry-actions > button,
+  .room-entry-actions > .room-entry-join,
+  .room-entry-join > input,
+  .room-entry-join > button { flex: none !important; width: 100%; min-width: 0; }
+  .room-entry-actions button, .room-entry-join input { min-height: 48px; }
+}
