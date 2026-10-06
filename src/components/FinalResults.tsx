@@ -10,7 +10,7 @@ interface FinalResultsProps {
 }
 
 export default function FinalResults({ room, players, isHost, busy, onPlayAgain }: FinalResultsProps) {
-  const ranking = finalRanking(players, room.scores);
+  const ranking = finalRanking(players, room.scores, room.scoreItemCounts);
   const winners = ranking.filter(player => player.perfectCount > 0).sort((a, b) => b.perfectCount - a.perfectCount);
   const pairs = bestPairs(players, room.scores);
   return <section className="final-results" aria-labelledby="final-results-title">
@@ -19,7 +19,7 @@ export default function FinalResults({ room, players, isHost, busy, onPlayAgain 
       <section className="result-card" aria-labelledby="perfect-award-title">
         <h3 id="perfect-award-title">ピタリ賞</h3>
         <span className="result-symbol" aria-hidden="true">🎯</span>
-        <p className="result-description">100点の予想を達成！<br />1回につき＋10点</p>
+        <p className="result-description">100点の予想を達成！<br />選択肢5個：＋30点<br />6個：＋40点 · 7個：＋50点</p>
         <ul className="award-list">
           {winners.map(player => <li key={player.id} className="award-name">
             <strong>{player.name}</strong>

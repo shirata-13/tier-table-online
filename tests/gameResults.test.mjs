@@ -59,3 +59,23 @@ test('equal totals share a rank and missing guesses earn no bonus', () => {
   assert.equal(result[2].total, 0);
   assert.equal(result[2].perfectCount, 0);
 });
+
+test('perfect bonus depends on each question choice count: 5/6/7', () => {
+  const participants = ['a', 'b', 'c', 'd'].map(id => ({ id, name: id }));
+  const scores = { b: { a: 100 }, c: { a: 100 }, d: { a: 100 } };
+  const [winner] = finalRanking(participants, scores, { b: 5, c: 6, d: 7 });
+  assert.equal(winner.perfectCount, 3);
+  assert.equal(winner.bonus, 120);
+  assert.equal(winner.total, 420);
+});
+test('bonus uses host choices rather than guesser choices', () => {
+  const participants = [{ id: 'a', name: 'A', items: ['1','2','3','4','5'] }, { id: 'b', name: 'B', items: ['1','2','3','4','5','6','7'] }];
+  const [winner] = finalRanking(participants, { b: { a: 100 } });
+  assert.equal(winner.bonus, 50);
+});
+test('departed questioner metadata preserves bonus and non-perfect earns none', () => {
+  const [winner] = finalRanking([{ id: 'a', name: 'A' }], { b: { a: 100 }, c: { a: 99 } }, { b: 6, c: 7 });
+  assert.equal(winner.bonus, 40);
+  assert.equal(winner.perfectCount, 1);
+  assert.equal(winner.total, 239);
+});

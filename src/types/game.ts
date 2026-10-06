@@ -20,5 +20,6 @@ export interface RoomState {
   currentRoundIndex: number;
   players: Record<string, Player>;
   guesses: Record<string, Record<string, TierMap>>; // [hostId][guesserId] -> TierMap
+  scoreItemCounts?: Record<string, number>;
   scores: Record<string, Record<string, number>>;   // [hostId][guesserId] -> score
 }

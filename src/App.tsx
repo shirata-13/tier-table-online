@@ -222,6 +222,7 @@ export function App() {
     const updates: Record<string, unknown> = {};
     updates[`rooms/${roomCode}/guesses/${currentHost.id}/${myPlayerId}`] = currentBoardState;
     updates[`rooms/${roomCode}/scores/${currentHost.id}/${myPlayerId}`] = score;
+    updates[`rooms/${roomCode}/scoreItemCounts/${currentHost.id}`] = currentHost.items.length;
 
     await update(ref(db), updates);
   };

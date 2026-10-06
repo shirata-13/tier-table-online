@@ -19,13 +19,17 @@ export function bestPairs(players: Player[], scores: RoomState['scores']) {
   return pairs.filter(pair => pair.average === maximum);
 }
 
-export function finalRanking(players: Player[], scores: RoomState['scores']) {
+export function finalRanking(players: Player[], scores: RoomState['scores'], itemCounts: Record<string, number> = {}) {
   const results = players.map(player => {
-    const guesses = Object.entries(scores).filter(([hostId]) => hostId !== player.id)
-      .map(([, round]) => round[player.id]).filter((score): score is number => typeof score === 'number');
-    const baseScore = guesses.reduce((sum, score) => sum + score, 0);
-    const perfectCount = guesses.filter(score => score === 100).length;
-    const bonus = perfectCount * 10;
+    const guesses = Object.entries(scores).filter(([hostId, round]) => hostId !== player.id && typeof round[player.id] === 'number');
+    const baseScore = guesses.reduce((sum, [, round]) => sum + round[player.id], 0);
+    const perfectGuesses = guesses.filter(([, round]) => round[player.id] === 100);
+    const perfectCount = perfectGuesses.length;
+    const bonus = perfectGuesses.reduce((sum, [hostId]) => {
+      const count = itemCounts[hostId] ?? players.find(host => host.id === hostId)?.items?.length;
+      const award = count === 5 ? 30 : count === 6 ? 40 : count === 7 ? 50 : 10;
+      return sum + award;
+    }, 0);
     return { ...player, baseScore, perfectCount, bonus, total: baseScore + bonus };
   }).sort((a, b) => b.total - a.total);
   return results.map(player => ({ ...player,
