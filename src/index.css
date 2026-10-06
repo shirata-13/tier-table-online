@@ -96,3 +96,11 @@ button:focus-visible, input:focus-visible { outline: 3px solid #171411; outline-
   .tier-pool { flex-wrap: wrap !important; overflow-x: visible !important; align-items: stretch !important; }
   .tier-pool-item { flex: 0 0 calc((100% - 8px) / 2); min-width: 0; padding: 8px 10px !important; white-space: normal; overflow-wrap: anywhere; line-height: 1.5; }
 }
+
+.submission-progress { margin: 16px 0; padding: 12px; border: 2px solid #171411; border-radius: 8px; background: #FFF2BF; }
+.submission-summary { margin: 0 0 10px; font-weight: 700; }
+.submission-summary strong { color: #236B37; display: inline-block; }
+.submission-list { display: flex; flex-wrap: wrap; gap: 8px; padding: 0; margin: 0; list-style: none; }
+.submission-list li { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 6px 10px; border: 1px solid #171411; border-radius: 6px; font-size: .85rem; overflow-wrap: anywhere; }
+.submission-done { background: #D4F1CE; }
+.submission-waiting { background: #FFFDF3; }

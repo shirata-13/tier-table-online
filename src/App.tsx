@@ -4,6 +4,8 @@ import { db, waitForFirebaseConnection } from './firebase/config';
 import type { RoomState, Player, TierMap, TierRank } from './types/game';
 import { returnToLobby } from './gameResults';
 import FinalResults from './components/FinalResults';
+import SubmissionProgress from './components/SubmissionProgress';
+import { calculateScore } from './scoring';
 import { disconnectedPlayers, removePlayers } from './roomLifecycle';
 
 const TierBoard = lazy(() => import('./components/TierBoard'));
@@ -254,21 +256,6 @@ export function App() {
     setCurrentBoardState(null);
   };
 
-  // 得点計算アルゴリズム（距離ベース + ピタリ100点満点）
-  const calculateScore = (answerTier: TierMap, guessTier: TierMap, items: string[]) => {
-    if (!items.length) return 0;
-    const tierValues: Record<TierRank, number> = { S: 4, A: 3, B: 2, C: 1, D: 0, POOL: 0 };
-    let totalDiff = 0;
-    const maxDiff = items.length * 4;
-
-    items.forEach(item => {
-      const ansRank = (Object.keys(answerTier) as TierRank[]).find(k => k !== 'POOL' && answerTier[k]?.includes(item)) || 'C';
-      const guessRank = (Object.keys(guessTier) as TierRank[]).find(k => k !== 'POOL' && guessTier[k]?.includes(item)) || 'C';
-      totalDiff += Math.abs(tierValues[ansRank] - tierValues[guessRank]);
-    });
-
-    return Math.round(((maxDiff - totalDiff) / maxDiff) * 100);
-  };
 
   if (!room) {
     return (
@@ -311,6 +298,9 @@ export function App() {
   const myData = room.players[myPlayerId];
   const isHost = room.hostId === myPlayerId;
   const currentHost = playersList[room.currentRoundIndex];
+  const guessers = playersList.filter(player => player.id !== currentHost?.id);
+  const submittedGuessers = guessers.filter(player => room.guesses[currentHost?.id]?.[player.id]).map(player => player.id);
+  const allGuessesSubmitted = guessers.length > 0 && submittedGuessers.length === guessers.length;
   if (!currentHost || !myData) return <p role="alert">参加者情報が不正です。再読み込みしてください。</p>;
 
   return (
@@ -360,6 +350,7 @@ export function App() {
             <h3 style={{ color: '#171411' }}>{myData?.topic}</h3>
           </div>
 
+          <SubmissionProgress label="Tier表の作成" players={playersList} submitted={playersList.filter(player => player.hostTier).map(player => player.id)} />
           {myData?.hostTier ? (
             <div style={{ textAlign: 'center', padding: '32px 0', color: '#236B37', fontWeight: 'bold' }}>
               ✓ あなたのTier表は送信済みです。他のプレイヤーの入力完了を待っています...
@@ -390,6 +381,8 @@ export function App() {
             <h3 style={{ color: '#171411' }}>{currentHost.topic}</h3>
           </div>
 
+          <SubmissionProgress label="予想の回答" players={guessers} submitted={submittedGuessers} />
+          <p style={{ fontSize: '0.85rem', color: '#514547' }}>得点：完全一致は満点、1段ずれは半分、2段以上のずれは0点（全項目を合わせて100点満点）</p>
           {currentHost.id === myPlayerId ? (
             <div style={{ textAlign: 'center', padding: '32px 0' }}>
               <p style={{ color: '#171411', fontWeight: 'bold', fontSize: '1.2rem' }}>あなたは「親（出題者）」です！</p>
@@ -399,14 +392,14 @@ export function App() {
                 {(['S', 'A', 'B', 'C', 'D'] as TierRank[]).map(rank => <p key={rank} style={{ margin: '8px 0' }}><strong>{rank}:</strong> {(myData.hostTier?.[rank] ?? []).join('、') || 'なし'}</p>)}
               </section>
               {(
-                <button disabled={busy} onClick={() => void perform(openRoundResult)} style={{ marginTop: '24px', padding: '12px 24px', backgroundColor: '#FFFDF3', color: '#171411', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
-                  全員の入力完了後に正解オープン！
+                <button disabled={busy || !allGuessesSubmitted} onClick={() => void perform(openRoundResult)} style={{ marginTop: '24px', padding: '12px 24px', backgroundColor: '#FFFDF3', color: '#171411', border: '3px solid #171411', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}>
+                  {allGuessesSubmitted ? '全員そろいました！正解オープン' : `回答待ち（${submittedGuessers.length} / ${guessers.length}人）`}
                 </button>
               )}
             </div>
           ) : room.guesses[currentHost.id]?.[myPlayerId] ? (
             <div style={{ textAlign: 'center', padding: '32px 0', color: '#236B37', fontWeight: 'bold' }}>
-              ✓ 予想を確定しました。全員の完了を待っています...
+              {allGuessesSubmitted ? '✓ 全員の予想がそろいました！出題者の正解公開を待っています。' : '✓ 予想を確定しました。他のプレイヤーの回答を待っています。'}
             </div>
           ) : (
             <>
